@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+from youtube_search.constants import REDIS_URL
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,7 +32,8 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = [
+
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,9 +41,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+THIRD_PARTY_APPS = [
+    'celery',
+    'django_extensions',
+    'django_celery_beat',
+    'rest_framework',
+    'corsheaders',
+]
+
+LOCAL_APPS = [
+    "api",
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,13 +90,6 @@ WSGI_APPLICATION = 'youtube_search.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 DATABASES = {
     'default': {
@@ -128,3 +139,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'common.pagination.StandardResultsSetPagination',
+}

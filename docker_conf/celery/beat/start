@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+
+rm -f './celerybeat.pid'
+celery -A youtube_search.celery_app beat -l INFO

@@ -3,16 +3,46 @@ version: "3.9"
 services:
   db:
     image: postgres
+    container_name: postgres
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
       - "8000:8000"
+    container_name: web
     depends_on:
       - db
+    command: python manage.py runserver 0.0.0.0:8000
+
+  redis:
+    image: redis:5.0
+    container_name: redis
+
+  celerybeat:
+    build: .
+    volumes:
+      - .:/code
+    container_name: celerybeat
+    depends_on:
+      - redis
+      - db
+    ports: []
+    command: /start-celerybeat
+
+  celeryworker:
+    build: .
+    volumes:
+      - .:/code
+    container_name: celeryworker
+    depends_on:
+      - redis
+      - db
+      - celerybeat
+    ports: []
+    command: /start-celeryworker

@@ -1,0 +1,5 @@
+YOUTUBE_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+YOUTUBE_SEARCH_QUERY = 'cricket'
+YOUTUBE_API_KEY = 'AIzaSyDe8JYrB3S2J0ge34-yvv5QFMThONU5S_g'
+
+REDIS_URL = "redis://redis:6379/0"
