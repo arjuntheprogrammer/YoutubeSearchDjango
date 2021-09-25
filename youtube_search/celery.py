@@ -13,6 +13,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'fetch_youtube_data': {
         'task': 'api.tasks.fetch_latest_videos',
-        "schedule": 100,
+        "schedule": 10,
     }
 }
